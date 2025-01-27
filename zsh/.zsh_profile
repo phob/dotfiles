@@ -1,2 +1,37 @@
 export DOTNET_ROOT="/usr/share/dotnet"
 export PATH="$PATH:/home/pho/.dotnet/tools:/usr/share/dotnet"
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/usr/lib/wsl/lib
+export GALLIUM_DRIVER=d3d12
+
+# You may need to manually set your language environment
+export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+	export EDITOR='vim'
+else
+	export EDITOR='nvim'
+fi
+
+# zsh parameter completion for the dotnet CLI
+
+_dotnet_zsh_complete() {
+  local completions=("$(dotnet complete "$words")")
+
+  # If the completion list is empty, just continue with filename selection
+  if [ -z "$completions" ]; then
+    _arguments '*::arguments: _normal'
+    return
+  fi
+
+  # This is not a variable assignment, don't remove spaces!
+  _values = "${(ps:\n:)completions}"
+}
+
+compdef _dotnet_zsh_complete dotnet
+# zsh parameter completion for the dotnet CLI end
+
+alias sudo='sudo '
+alias s="sudo"
+alias p="s pacman"
+alias pn="pnpm"
