@@ -146,9 +146,33 @@ if command -v zoxide &>/dev/null; then
 fi
 
 # ----- Plugins -----
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source ~/.zsh/spaceship/spaceship.zsh
+# Run ~/dotfiles/bootstrap.sh once on a new machine to clone these plugin repos.
+typeset -ga _dotfiles_missing_plugins=()
+
+if [[ -f ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+else
+  _dotfiles_missing_plugins+=("~/.zsh/zsh-autosuggestions")
+fi
+
+if [[ -f ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+else
+  _dotfiles_missing_plugins+=("~/.zsh/zsh-syntax-highlighting")
+fi
+
+if [[ -f ~/.zsh/spaceship/spaceship.zsh ]]; then
+  source ~/.zsh/spaceship/spaceship.zsh
+else
+  _dotfiles_missing_plugins+=("~/.zsh/spaceship")
+fi
+
+if [[ -o interactive && ${#_dotfiles_missing_plugins[@]} -gt 0 ]]; then
+  print -P "%F{yellow}dotfiles:%f missing plugin repos: ${_dotfiles_missing_plugins[*]}"
+  print "run ~/dotfiles/bootstrap.sh to clone them"
+fi
+
+unset _dotfiles_missing_plugins
 
 # ----- Keybindings -----
 bindkey '^[[Z' reverse-menu-complete    # Shift+Tab reverse menu

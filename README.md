@@ -48,6 +48,22 @@ stow zsh git nvim
 
 If a target file already exists, Stow will refuse to overwrite it. Move/back it up first, then run stow again.
 
+## Bootstrap external plugin repos
+
+This setup expects a few plugin repos to exist under `~/.zsh` and `~/.tmux/plugins`.
+
+Run this once after cloning:
+
+```bash
+cd ~/dotfiles
+./bootstrap.sh
+```
+
+Useful flags:
+
+- `./bootstrap.sh --update` updates already-cloned plugin repos.
+- `./bootstrap.sh --no-stow` skips the `stow -R zsh tmux` step.
+
 ## Add new things to stow
 
 When you create a new config, put it in a package path first, then stow that package.
