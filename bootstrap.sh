@@ -44,12 +44,23 @@ clone_or_update_repo() {
   local target="$1"
   local url="$2"
   local branch="$3"
+  local submodule_path="${4:-}"
 
-  if [[ -d "$target/.git" ]]; then
+  if [[ -e "$target/.git" ]]; then
     echo "[ok] $target already exists"
     if [[ "$DO_UPDATE" -eq 1 ]]; then
       echo "[up] updating $target"
       git -C "$target" pull --ff-only
+    fi
+    return
+  fi
+
+  if [[ -n "$submodule_path" ]] && git -C "$DOTFILES_DIR" submodule status -- "$submodule_path" >/dev/null 2>&1; then
+    echo "[submodule] initializing $submodule_path"
+    git -C "$DOTFILES_DIR" submodule update --init --recursive -- "$submodule_path"
+    if [[ "$DO_UPDATE" -eq 1 ]]; then
+      echo "[submodule] updating $submodule_path"
+      git -C "$DOTFILES_DIR" submodule update --remote --merge -- "$submodule_path"
     fi
     return
   fi
@@ -64,10 +75,10 @@ clone_or_update_repo() {
   git clone --depth=1 --branch "$branch" "$url" "$target"
 }
 
-clone_or_update_repo "$HOME/.zsh/zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions.git" "master"
-clone_or_update_repo "$HOME/.zsh/zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git" "master"
-clone_or_update_repo "$HOME/.zsh/spaceship" "https://github.com/spaceship-prompt/spaceship-prompt.git" "master"
-clone_or_update_repo "$HOME/.tmux/plugins/tpm" "https://github.com/tmux-plugins/tpm.git" "master"
+clone_or_update_repo "$DOTFILES_DIR/zsh/.zsh/zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions.git" "master" "zsh/.zsh/zsh-autosuggestions"
+clone_or_update_repo "$DOTFILES_DIR/zsh/.zsh/zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git" "master" "zsh/.zsh/zsh-syntax-highlighting"
+clone_or_update_repo "$DOTFILES_DIR/zsh/.zsh/spaceship" "https://github.com/spaceship-prompt/spaceship-prompt.git" "master" "zsh/.zsh/spaceship"
+clone_or_update_repo "$DOTFILES_DIR/tmux/.tmux/plugins/tpm" "https://github.com/tmux-plugins/tpm.git" "master" "tmux/.tmux/plugins/tpm"
 
 if [[ "$DO_STOW" -eq 1 ]]; then
   if command -v stow >/dev/null 2>&1; then

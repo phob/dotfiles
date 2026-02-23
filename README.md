@@ -51,6 +51,7 @@ If a target file already exists, Stow will refuse to overwrite it. Move/back it 
 ## Bootstrap external plugin repos
 
 This setup expects a few plugin repos to exist under `~/.zsh` and `~/.tmux/plugins`.
+They are tracked as git submodules in this repo, and `./bootstrap.sh` initializes them for you.
 
 Run this once after cloning:
 
